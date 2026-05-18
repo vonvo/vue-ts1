@@ -58,6 +58,7 @@ import { onMounted, ref, watch,nextTick, reactive } from 'vue';
 import type { NoteList, NoteListState,Note } from '../types';
 import { useListStore } from '../stores/notelist';
 
+
 const listStore=useListStore();
 
 const items=ref([] as HTMLElement[]);
@@ -99,9 +100,15 @@ const initList=()=>{
     // getNotes<NoteList>(1,20).then((res)=>{
     //     console.log(res);
     //     notes.value=res;
-        
+
     // })
-    listStore.getNotesList();
+
+    listStore.getNotesList().then((res)=>{
+        console.log(res,"11");
+        notes.value=res
+    })
+    
+    
      notes.value=listStore.list;
 }
 

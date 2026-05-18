@@ -9,7 +9,13 @@ const router = createRouter({
       path: '/',
       name: 'list',
       component: () => import('../views/ListView.vue')
-    }
+    },
+    {
+      path: '/add',
+      name: 'addNote',
+      component: () => import('../views/AddNoteView.vue')
+    },
+    
   ],
 })
 

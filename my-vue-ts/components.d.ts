@@ -15,6 +15,10 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     VanButton: typeof import('vant/es')['Button']
+    VanField: typeof import('vant/es')['Field']
+    VanFiled: typeof import('vant/es')['Filed']
+    VanIcon: typeof import('vant/es')['Icon']
+    VanNavBar: typeof import('vant/es')['NavBar']
   }
 }
 
@@ -23,4 +27,8 @@ declare global {
   const RouterLink: typeof import('vue-router')['RouterLink']
   const RouterView: typeof import('vue-router')['RouterView']
   const VanButton: typeof import('vant/es')['Button']
+  const VanField: typeof import('vant/es')['Field']
+  const VanFiled: typeof import('vant/es')['Filed']
+  const VanIcon: typeof import('vant/es')['Icon']
+  const VanNavBar: typeof import('vant/es')['NavBar']
 }
