@@ -2,10 +2,10 @@
     <div class="add-note-box">
         <van-nav-bar left-arrow >
             <template #right>
-                <van-icon name="success" size="18" />
+                <van-icon name="success" size="18"  @click="doAddNotes" />
             </template>
         </van-nav-bar>
-        <van-field class="filed" rows="1" autosize  type="textarea" placeholder="请输入笔记内容" ></van-field>
+        <van-field class="field" rows="1" autosize  type="textarea" placeholder="请输入笔记内容" v-model="state.note.content"></van-field>
     </div>
 </template>
 
@@ -16,6 +16,40 @@
 //     content:"",
 //     dates:""
 // })
+import { reactive } from 'vue';
+import { useListStore } from '@/stores/notelist';
+import { showSuccessToast } from 'vant';
+
+//手动路由跳转
+import { useRouter } from 'vue-router';
+
+const router=useRouter();
+
+const store=useListStore();
+const state=reactive({
+    note:{
+        content:"",
+        dates:""
+    }
+})
+
+const date=new Date();
+const doAddNotes=async ()=>{
+    //装填数据
+    state.note.dates=`${date.getFullYear()}年${(date.getMonth()+1)}月${date.getDate()}日`
+
+    await store.addNoteList(state.note).then((res)=>{
+        if(res){
+            showSuccessToast("添加成功");
+            //跳转到列表页
+            router.push({name:"list"});
+        }
+    })
+}
+
+
+
+
 </script>
 
 <style lang="scss" scoped>
@@ -25,7 +59,7 @@
     overflow-y: auto;
     flex: 1;
     background: #fff;
-    .filed{
+    .field{ 
         font-size: 0.22rem;
     }
 

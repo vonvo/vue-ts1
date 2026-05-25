@@ -19,6 +19,7 @@ declare module 'vue' {
     VanFiled: typeof import('vant/es')['Filed']
     VanIcon: typeof import('vant/es')['Icon']
     VanNavBar: typeof import('vant/es')['NavBar']
+    VanSearch: typeof import('vant/es')['Search']
   }
 }
 
@@ -31,4 +32,5 @@ declare global {
   const VanFiled: typeof import('vant/es')['Filed']
   const VanIcon: typeof import('vant/es')['Icon']
   const VanNavBar: typeof import('vant/es')['NavBar']
+  const VanSearch: typeof import('vant/es')['Search']
 }

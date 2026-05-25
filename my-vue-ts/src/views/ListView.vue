@@ -1,5 +1,6 @@
 <template>
     <div class="note-box">
+        <van-search placeholder="搜索便签" input-align="center" @search="handleSearch;"></van-search>
         <div class="list-box">
             <div class="list-left">
                 <div class="list-item" v-for="item in state.leftList" :key="item?._id" >
@@ -58,6 +59,9 @@ import { onMounted, ref, watch,nextTick, reactive } from 'vue';
 import type { NoteList, NoteListState,Note } from '../types';
 import { useListStore } from '../stores/notelist';
 
+const stateV=reactive({
+    searchValue:""
+})
 
 const listStore=useListStore();
 
@@ -128,6 +132,15 @@ watch(notes,()=>{
   flex: 1;
   padding: 0 0.1rem;
   box-sizing: border-box;
+  .van-search{
+    //样式的穿透
+    :v-deep(.van-search_content){
+        background-color: rgb(2427,247,247);
+        border-radius: 0.2rem;
+    }
+    background-color: rgb(2427,247,247);
+    
+  }
   .list-box {
     width: 100%;
     height: 100%;
