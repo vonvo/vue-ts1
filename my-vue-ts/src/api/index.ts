@@ -14,8 +14,8 @@ axios.interceptors.response.use(
         if(res.data.status===20000){
         return res.data.data;
         }
-},error=>{
-    return Promise.reject(error);
+    },error=>{
+        return Promise.reject(error);
 }) 
 
 export default axios;

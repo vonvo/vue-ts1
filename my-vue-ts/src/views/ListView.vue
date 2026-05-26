@@ -1,6 +1,6 @@
 <template>
     <div class="note-box">
-        <van-search placeholder="搜索便签" input-align="center" @search="handleSearch;"></van-search>
+        <van-search placeholder="搜索便签" v-model="stateV.searchValue" input-align="center" @search="handleSearch"   mouse-event-touch @clear="handleClear"></van-search>
         <div class="list-box">
             <div class="list-left">
                 <div class="list-item" v-for="item in state.leftList" :key="item?._id" >
@@ -59,11 +59,32 @@ import { onMounted, ref, watch,nextTick, reactive } from 'vue';
 import type { NoteList, NoteListState,Note } from '../types';
 import { useListStore } from '../stores/notelist';
 
+
+
 const stateV=reactive({
     searchValue:""
 })
 
+
+
 const listStore=useListStore();
+
+const handleSearch=()=>{
+    listStore.getNotesListSearch(stateV.searchValue).then((res)=>{
+        items.value=[]
+        notes.value=res
+    })
+    
+}
+
+const handleClear=()=>{
+    listStore.getNotesList().then((res)=>{
+        // console.log(res,"11");
+        items.value=[]
+        notes.value=res
+    })
+    
+}
 
 const items=ref([] as HTMLElement[]);
 const notes =ref([] as NoteList);
@@ -135,10 +156,10 @@ watch(notes,()=>{
   .van-search{
     //样式的穿透
     :v-deep(.van-search_content){
-        background-color: rgb(2427,247,247);
+        background-color: rgb(247,247,247);
         border-radius: 0.2rem;
     }
-    background-color: rgb(2427,247,247);
+    background-color: rgb(247,247,247);
     
   }
   .list-box {
