@@ -1,7 +1,7 @@
 <template>
     <div class="note-box">
         <van-search placeholder="搜索便签" v-model="stateV.searchValue" input-align="center" @search="handleSearch"   mouse-event-touch @clear="handleClear"></van-search>
-        <div class="list-box">
+        <div class="list-box" ref="refListBox">
             <div class="list-left">
                 <div class="list-item" v-for="item in state.leftList" :key="item?._id" >
                     <div class="item-content">
@@ -58,11 +58,21 @@ import { onMounted, ref, watch,nextTick, reactive } from 'vue';
 // import { getNotes } from '../api/note';
 import type { NoteList, NoteListState,Note } from '../types';
 import { useListStore } from '../stores/notelist';
+import { debounce } from '../utils/debounce';
+import useLoadMore from '../use/useLoadMore';   
+import { List } from 'vant';
+
+const refListBox = ref<HTMLElement | null>(null);
+
+//判断是否触底，用hooks函数写
 
 
 
 const stateV=reactive({
-    searchValue:""
+    searchValue:"",
+    page:1,
+    size:13,
+
 })
 
 
@@ -70,15 +80,24 @@ const stateV=reactive({
 const listStore=useListStore();
 
 const handleSearch=()=>{
-    listStore.getNotesListSearch(stateV.searchValue).then((res)=>{
+    //当输入框为空时，获取所有笔记
+    if(!stateV.searchValue.trim()){
+        listStore.getNotesList(stateV.page,stateV.size).then((res)=>{
+        // console.log(res,"11");
+        items.value=[]
+        notes.value=res
+    })
+    }else{
+        listStore.getNotesListSearch(stateV.searchValue).then((res)=>{
         items.value=[]
         notes.value=res
     })
     
 }
+}
 
 const handleClear=()=>{
-    listStore.getNotesList().then((res)=>{
+    listStore.getNotesList(stateV.page,stateV.size).then((res)=>{
         // console.log(res,"11");
         items.value=[]
         notes.value=res
@@ -128,7 +147,7 @@ const initList=()=>{
 
     // })
 
-    listStore.getNotesList().then((res)=>{
+    listStore.getNotesList(stateV.page,stateV.size).then((res)=>{
         console.log(res,"11");
         notes.value=res
     })
@@ -137,10 +156,25 @@ const initList=()=>{
      notes.value=listStore.list;
 }
 
+//分页请求
+const loadMore=()=>{
+    stateV.page++;
+    listStore.getNotesList(stateV.page,stateV.size).then((res)=>{
+        items.value=[]
+        notes.value=res
+    })
+    
+}
 
 onMounted(()=>{
     initList();
+    useLoadMore(refListBox,()=>{
+        loadMore();
+    })
 })
+//实时搜索，用watch
+watch(()=>stateV.searchValue,debounce(handleSearch,1000))
+
 
 watch(notes,()=>{
     initLRlist();

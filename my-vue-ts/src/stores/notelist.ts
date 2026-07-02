@@ -9,11 +9,21 @@ export const useListStore = defineStore('list', ()=>{
   const list = ref([] as Note[])
 
   //获取分页笔记
-  const  getNotesList =async ()=>{
-    const res=await getNotes<NoteList>(1,200)
-    list.value=res;
-    return res;
+  // const  getNotesList =async ()=>{
+  //   const res=await getNotes<NoteList>(1,200)
+  //   list.value=res;
+  //   return res;
+  // }
+  const  getNotesList =async (page:number,size:number)=>{
+    const res=await getNotes<NoteList>(page,size)
+    if(page===1){
+        list.value=res;
+    }else{
+        list.value.push(...res);
+    }
+    return [...list.value];
   }
+
 
   //添加笔记
   const  addNoteList =async (payload:Note)=>{
