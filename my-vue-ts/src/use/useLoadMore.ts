@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-
+import { throttle } from '@/utils/throllte'
 
 
 export default function useLoadMore(element: Ref<HTMLElement | null>,fn:Function){
@@ -16,5 +16,5 @@ export default function useLoadMore(element: Ref<HTMLElement | null>,fn:Function
             fn();
         }
     }
-    element.value?.addEventListener('scroll',loadMore);
+    element.value?.addEventListener('scroll',throttle(loadMore,1000));
 }

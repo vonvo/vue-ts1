@@ -2,7 +2,7 @@
     <div class="note-box">
         <van-search placeholder="搜索便签" v-model="stateV.searchValue" input-align="center" @search="handleSearch"   mouse-event-touch @clear="handleClear"></van-search>
         <div class="list-box" ref="refListBox">
-            <div class="list-left">
+            <div class="list-left" @click="handleClickItem">
                 <div class="list-item" v-for="item in state.leftList" :key="item?._id" >
                     <div class="item-content">
                         <p class="item-text">
@@ -14,6 +14,7 @@
                             {{item?.dates}}
                         </p>
                     </div>
+                    <div class="click-model" :id="item['_id']"></div>
                 </div>
             </div>
             <div class="list-right">
@@ -49,7 +50,8 @@
                     </div>
                 </div>
             </div>
-        </div>      
+        </div> 
+        <van-button round icon="plus" class="button" type="primary" @click="handleAdd"></van-button>     
     </div>  
 </template>
 
@@ -60,13 +62,24 @@ import type { NoteList, NoteListState,Note } from '../types';
 import { useListStore } from '../stores/notelist';
 import { debounce } from '../utils/debounce';
 import useLoadMore from '../use/useLoadMore';   
-import { List } from 'vant';
+
+import {useRoute, useRouter} from 'vue-router';
 
 const refListBox = ref<HTMLElement | null>(null);
 
 //判断是否触底，用hooks函数写
 
+const handleClickItem=(e:any)=>{
+ if(e.target.className=='click-model'){
+    const id=e.target.id
+    router.push({path:"/add",query:{id}})
+ }
+}
 
+const router=useRouter()
+const handleAdd=()=>{
+    router.push("/add")
+}
 
 const stateV=reactive({
     searchValue:"",
@@ -283,5 +296,16 @@ watch(notes,()=>{
       }
     }
   }
+  .button {
+    position: fixed;
+    bottom: 0.2rem;
+    right: 0.2rem;
+    
+  }
+  .van-button {
+    width: 0.44rem;
+    height: 0.44rem;
+  }
+
 }
 </style>
