@@ -2,7 +2,7 @@
     <div class="note-box">
         <van-search placeholder="搜索便签" v-model="stateV.searchValue" input-align="center" @search="handleSearch"   mouse-event-touch @clear="handleClear"></van-search>
         <div class="list-box" ref="refListBox">
-            <div class="list-left" @click="handleClickItem">
+            <div class="list-left" @click="handleClickItem" ref="leftref">
                 <div class="list-item" v-for="item in state.leftList" :key="item?._id" >
                     <div class="item-content">
                         <p class="item-text">
@@ -17,7 +17,7 @@
                     <div class="click-model" :id="item['_id']"></div>
                 </div>
             </div>
-            <div class="list-right">
+            <div class="list-right" @click="handleClickItem" ref="rightref">
                 <div class="list-item" v-for="item in state.rightList" :key="item?._id" >
                     <div class="item-content">
                         <p class="item-text">
@@ -29,6 +29,7 @@
                             {{item?.dates}}
                         </p>
                     </div>
+                    <div class="click-model" :id="item['_id']"></div>
                 </div>
             </div>
             <div class="init-list">
@@ -51,6 +52,9 @@
                 </div>
             </div>
         </div> 
+        <van-popup v-model:show="show" position="bottom" :style="{height:'10%'}">
+            <div class="delete-box" @click="handleDelete">删除</div>
+        </van-popup>
         <van-button round icon="plus" class="button" type="primary" @click="handleAdd"></van-button>     
     </div>  
 </template>
@@ -62,8 +66,11 @@ import type { NoteList, NoteListState,Note } from '../types';
 import { useListStore } from '../stores/notelist';
 import { debounce } from '../utils/debounce';
 import useLoadMore from '../use/useLoadMore';   
+import useLongTouch from '@/use/useLongTouch';
 
 import {useRoute, useRouter} from 'vue-router';
+import { defaultClientConditions } from 'vite';
+import { showSuccessToast } from 'vant';
 
 const refListBox = ref<HTMLElement | null>(null);
 
@@ -85,6 +92,7 @@ const stateV=reactive({
     searchValue:"",
     page:1,
     size:13,
+    delid:""
 
 })
 
@@ -128,6 +136,33 @@ const noteListState: NoteListState={
 
 const state=reactive(noteListState);
 
+const show=ref(false)
+
+const leftref=ref<null|HTMLElement>(null)
+
+const rightref=ref<null|HTMLElement>(null)
+
+useLongTouch([leftref,rightref],(id:string)=>{
+    console.log(id)
+    stateV.delid=id
+    show.value=true
+
+
+})
+
+const handleDelete=()=>{
+    listStore.deleteNoteByIdList(stateV.delid).then(res=>{
+        if(res){
+            show.value=false
+            showSuccessToast("删除成功")
+                listStore.getNotesList(stateV.page,stateV.size).then((res)=>{
+        // console.log(res,"11");
+        items.value=[]
+        notes.value=res
+        })
+    }
+    })
+}
 
 const initLRlist=()=>{
     let leftHeightSum=0;
@@ -302,9 +337,19 @@ watch(notes,()=>{
     right: 0.2rem;
     
   }
+
   .van-button {
     width: 0.44rem;
     height: 0.44rem;
+  }
+  .delete-box{
+    height:100% ;
+    width:100% ;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: blue;
+    font-size: 0.23rem;
   }
 
 }

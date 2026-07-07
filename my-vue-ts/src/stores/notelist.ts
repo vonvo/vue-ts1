@@ -1,7 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import type { Note ,NoteList} from '@/types'
-import { getNotes,addNotes,getNotesListByContent } from '../api/note';
+import { getNotes,addNotes,getNotesListByContent,updateNotes,getNotesById,deleteNoteById } from '../api/note';
 
 
 export const useListStore = defineStore('list', ()=>{
@@ -39,5 +39,22 @@ export const useListStore = defineStore('list', ()=>{
     return res;
   }
 
-  return { list, getNotesList,addNoteList,getNotesListSearch }
+  //更新笔记
+  const getupdateNoteList =async (payload:any)=>{
+    const res=await updateNotes<Note>(payload.id,payload.note)
+    return res;
+  }
+  //根据id值获取笔记
+  const getNoteById =async (payload:string)=>{
+    const res=await getNotesById<Note>(payload)
+    return res;
+  }
+  //删除笔记
+  const deleteNoteByIdList =async (payload:string)=>{
+    const res=await deleteNoteById<Note>(payload)
+    return res;
+  }
+
+  return { list, getNotesList,addNoteList,getNotesListSearch,getupdateNoteList,getNoteById,deleteNoteByIdList }
 })
+
